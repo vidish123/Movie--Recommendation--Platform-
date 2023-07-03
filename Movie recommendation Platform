@@ -1,0 +1,66 @@
+#Importing necessary libraries
+import pandas as pd
+import numpy as np
+#Reading Movie Dataset
+movies_df=pd.read_csv('/kaggle/input/movie-recommender-system/movies.csv')
+#Reading Rating Dataset
+ratings_df=pd.read_csv('/kaggle/input/movie-recommender-system/ratings.csv')
+#Displaying the first few rows of a DataFrame
+movies_df.head()
+ratings_df.head()
+ratings_df.info()
+ratings_df.describe()
+#Finding unique users and movies
+ratings_df['userId'].nunique()
+movies_df['movieId'].nunique(),ratings_df['movieId'].nunique()
+movies2=movies_df.explode('genres')
+movies_df['genres']=movies_df['genres'].str.split("|")
+movies2=movies_df.explode('genres')
+movies2.head(20)
+#list out column of Movies_DF
+print(movies_df.columns)
+#list out column of Rating_DF
+print(ratings_df.columns)
+#Prediction_Level
+import pandas as pd
+import numpy as np
+#Reading Movie Dataset¶
+movies_df = pd.read_csv('/kaggle/input/movie-recommender-system/movies.csv')
+ratings_df = pd.read_csv('/kaggle/input/movie-recommender-system/ratings.csv')
+# Extract genres from the "genres" column and store in a new column "genre_list"
+movies_df['genre_list'] = movies_df['genres']
+movies_df
+movies_df['genre_list'] = movies_df['genres'].apply(lambda x: x.split('|'))
+movies_df
+#Convert the list of genres to a string so that it can be used for similarity calculation
+movies_df['genre_str'] = movies_df['genre_list'].apply(lambda x: ' '.join(x))
+movies_df
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
+#Create a CountVectorizer object to convert movie genres to a matrix of token counts
+count = CountVectorizer()
+count_matrix = count.fit_transform(movies_df['genre_str'])
+#Calculate the cosine similarity matrix
+cosine_sim = cosine_similarity(count_matrix, count_matrix)
+#Define a function to get the top 10 similar movies based on cosine similarity
+
+def get_similar_movies(movie_title, cosine_sim=cosine_sim, movies_df=movies_df):
+    
+    idx = movies_df.loc[movies_df['title']==movie_title].index[0]
+
+    sim_scores = list(enumerate(cosine_sim[idx]))
+
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+   
+    sim_scores = sim_scores[1:11]
+    movie_indices = [i[0] for i in sim_scores]
+
+    return movies_df['title'].iloc[movie_indices]
+    get_similar_movies('Toy Story (1995)')
+moviename=input("Enter movie name: ")
+print("Here are the similar kind of movie list: ")
+get_similar_movies(moviename)
+
+
+
+
